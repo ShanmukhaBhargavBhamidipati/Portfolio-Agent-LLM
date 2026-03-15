@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Portfolio Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Local Portfolio Builder</p>
+          <h1>Design, revise, and approve your portfolio from one browser tab.</h1>
+          <p class="lede">
+            This UI replaces the terminal loop. Paste resume content, generate the site,
+            preview the latest HTML, then rate or revise it without leaving the app.
+          </p>
+        </div>
+
+        <div class="status-card">
+          <div>
+            <p class="label">Current mode</p>
+            <p class="status-value" id="input-mode">Loading</p>
+          </div>
+          <button id="reset-session" class="ghost-button" type="button">Reset session</button>
+        </div>
+
+        <section class="artifact-card">
+          <div class="section-header">
+            <h2>Generated Portfolio</h2>
+            <p id="html-path">No saved HTML yet.</p>
+          </div>
+          <iframe id="portfolio-frame" title="Portfolio preview"></iframe>
+        </section>
+
+        <section class="artifact-card">
+          <div class="section-header">
+            <h2>Inspiration Notes</h2>
+            <p>URL summaries used during revisions.</p>
+          </div>
+          <div id="url-summaries" class="summary-list empty-state">No inspiration URLs used yet.</div>
+        </section>
+      </aside>
+
+      <main class="workspace-panel">
+        <section class="chat-card">
+          <div class="section-header">
+            <h2>Conversation</h2>
+            <p>Use the chat to generate and iterate on the portfolio.</p>
+          </div>
+          <div id="chat-log" class="chat-log"></div>
+          <form id="chat-form" class="composer">
+            <textarea
+              id="message-input"
+              name="message"
+              rows="4"
+              placeholder="Loading..."
+            ></textarea>
+            <div class="composer-bar">
+              <p id="composer-hint">Waiting for session state...</p>
+              <button id="send-button" type="submit">Send</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="resume-card">
+          <div class="section-header">
+            <h2>Parsed Resume</h2>
+            <p>Saved structured resume output, if available.</p>
+          </div>
+          <pre id="resume-output" class="code-block empty-state">No parsed resume saved yet.</pre>
+        </section>
+      </main>
+    </div>
+
+    <template id="message-template">
+      <article class="message">
+        <p class="message-role"></p>
+        <div class="message-body"></div>
+      </article>
+    </template>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

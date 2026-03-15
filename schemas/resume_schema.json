@@ -1,0 +1,185 @@
+{
+  "basics": {
+    "type": "basics",
+    "fields": {
+      "name": null,
+      "label": null,
+      "image": null,
+      "email": null,
+      "phone": null,
+      "url": null,
+      "summary": null,
+      "location": {
+        "type": "location",
+        "fields": {
+          "address": null,
+          "postalCode": null,
+          "city": null,
+          "countryCode": null,
+          "region": null
+        },
+        "children": [],
+        "raw": null,
+        "other": {},
+        "unmapped": []
+      },
+      "profiles": [
+        {
+          "type": "profile",
+          "fields": {
+            "network": null,
+            "username": null,
+            "url": null
+          },
+          "children": [],
+          "raw": null,
+          "other": {},
+          "unmapped": []
+        }
+      ]
+    },
+    "children": [],
+    "raw": null,
+    "other": {},
+    "unmapped": []
+  },
+
+  "sections": [
+    {
+      "type": "work",
+      "label": "Work Experience",
+      "fields": {},
+      "children": [
+        {
+          "type": "workItem",
+          "fields": {
+            "name": null,
+            "position": null,
+            "url": null,
+            "startDate": null,
+            "endDate": null,
+            "summary": null,
+            "location": null,
+            "employmentType": null,
+            "technologies": [],
+            "keywords": [],
+            "highlights": []
+          },
+          "children": [],
+          "raw": null,
+          "other": {},
+          "unmapped": []
+        }
+      ],
+      "raw": null,
+      "other": {},
+      "unmapped": []
+    },
+
+    {
+      "type": "education",
+      "label": "Education",
+      "fields": {},
+      "children": [
+        {
+          "type": "educationItem",
+          "fields": {
+            "institution": null,
+            "url": null,
+            "area": null,
+            "studyType": null,
+            "degree": null,
+            "startDate": null,
+            "endDate": null,
+            "score": null,
+            "grade": null,
+            "location": null,
+            "courses": [],
+            "honors": [],
+            "activities": [],
+            "thesis": null
+          },
+          "children": [],
+          "raw": null,
+          "other": {},
+          "unmapped": []
+        }
+      ],
+      "raw": null,
+      "other": {},
+      "unmapped": []
+    },
+
+    {
+      "type": "projects",
+      "label": "Projects",
+      "fields": {},
+      "children": [
+        {
+          "type": "projectItem",
+          "fields": {
+            "name": null,
+            "startDate": null,
+            "endDate": null,
+            "description": null,
+            "url": null,
+            "role": null,
+            "technologies": [],
+            "keywords": [],
+            "highlights": []
+          },
+          "children": [],
+          "raw": null,
+          "other": {},
+          "unmapped": []
+        }
+      ],
+      "raw": null,
+      "other": {},
+      "unmapped": []
+    },
+
+    {
+      "type": "custom",
+      "label": null,
+      "fields": {
+        "sectionTitle": null,
+        "sectionType": null,
+        "summary": null
+      },
+      "children": [
+        {
+          "type": "customItem",
+          "fields": {
+            "title": null,
+            "subtitle": null,
+            "date": null,
+            "startDate": null,
+            "endDate": null,
+            "location": null,
+            "description": null,
+            "url": null,
+            "keywords": [],
+            "highlights": []
+          },
+          "children": [],
+          "raw": null,
+          "other": {},
+          "unmapped": []
+        }
+      ],
+      "raw": null,
+      "other": {},
+      "unmapped": []
+    }
+  ],
+
+  "meta": {
+    "sourceFileName": null,
+    "sourceFormat": null,
+    "parsedAt": null,
+    "parserVersion": null,
+    "rawText": null,
+    "other": {}
+  }
+}

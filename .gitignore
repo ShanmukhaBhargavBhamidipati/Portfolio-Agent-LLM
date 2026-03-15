@@ -1,0 +1,56 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.pyre/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build / temp / local runtime
+*.log
+*.tmp
+*.temp
+*.swp
+.python-version
+
+# Playwright / browser caches
+playwright-report/
+test-results/
+
+# Generated local app outputs
+parsed_resume.json
+portfolio.html
+
+# Local databases / state
+*.sqlite
+*.sqlite3
+*.db

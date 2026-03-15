@@ -1,0 +1,9 @@
+openai
+python-dotenv
+pydantic
+jsonschema
+beautifulsoup4
+requests
+playwright
+tinycss2
+flask
