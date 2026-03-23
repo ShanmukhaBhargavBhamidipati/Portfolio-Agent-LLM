@@ -1,53 +1,31 @@
 # Portfolio Agent
 
-Portfolio Agent is a local Flask app that helps you turn raw resume text and portfolio requirements into a standalone personal website.
+Portfolio Agent is a local Flask app that turns resume text and portfolio instructions into a standalone personal website. It parses resume content into structured JSON, generates a complete HTML portfolio, validates the output, saves the latest artifacts locally, and lets you review and revise the result in a browser UI.
 
-It uses the OpenAI API to:
-- parse resume content into structured JSON
-- generate a complete portfolio page as standalone HTML
-- validate the generated HTML/CSS/JS before saving it
-- let you review, rate, and revise the portfolio in a browser UI
-- optionally analyze public inspiration websites and use them to guide revisions
+## What this project does
 
-Everything runs locally on your machine except the model calls.
-
----
-
-## What it does
-
-The app supports a full portfolio-generation loop:
+The app supports an end-to-end portfolio generation loop:
 
 1. You paste resume text or describe the portfolio you want.
-2. The model returns a structured response containing:
-   - a `message`
-   - an optional `parsed_resume` object
-3. If resume data is returned, the app validates it against `schemas/resume_schema.json` and saves it as `parsed_resume.json`.
-4. If HTML is returned, the app validates:
-   - HTML structure
-   - inline CSS syntax
-   - inline JavaScript syntax
-   - standalone browser compatibility rules
-5. If HTML validation fails, the app attempts automatic repair.
-6. If valid HTML is produced, it is saved as `portfolio.html` and previewed in the web app.
-7. You rate the result from 1 to 10.
-8. If the rating is 7 or below, you can provide revision feedback and optional inspiration URLs.
-9. The app revises the portfolio and repeats the review loop.
-
----
+2. The model returns a structured response with a user-facing message and optional `parsed_resume` data.
+3. Resume data is validated against `schemas/resume_schema.json` and saved as `parsed_resume.json`.
+4. Generated HTML is validated for structure, inline CSS, inline JavaScript, and standalone-browser compatibility.
+5. Invalid HTML can go through an automatic repair loop.
+6. Valid HTML is saved as `portfolio.html` and shown in the web UI.
+7. You rate the output from 1 to 10.
+8. If the rating is 7 or below, you can request revisions and optionally include public inspiration URLs.
+9. The app analyzes those URLs and uses them to guide the next iteration.
 
 ## Features
 
-- Local browser-based chat workflow
+- Local browser-based workflow
 - Resume parsing into structured JSON
 - JSON schema validation for parsed resume output
-- Standalone portfolio HTML generation
-- Automatic HTML repair attempts when validation fails
-- Revision loop driven by user ratings and feedback
-- Inspiration URL analysis for design guidance
-- Live browser preview of the latest generated portfolio
-- Saved local artifacts for easy inspection
-
----
+- Standalone HTML portfolio generation
+- Automatic HTML repair attempts
+- Rating and revision loop
+- Public inspiration URL analysis
+- Local artifact saving for `parsed_resume.json` and `portfolio.html`
 
 ## Tech stack
 
@@ -59,8 +37,6 @@ The app supports a full portfolio-generation loop:
 - BeautifulSoup
 - tinycss2
 - Playwright
-
----
 
 ## Project structure
 
@@ -74,6 +50,7 @@ portfolio-agent-github-ready/
 ├── terminal_chat.py
 ├── requirements.txt
 ├── README.md
+├── .env.example
 ├── .gitignore
 ├── core/
 │   ├── api_client.py
@@ -110,85 +87,14 @@ parsed_resume.json
 portfolio.html
 ```
 
----
-
-## How the app works
-
-### 1. Web app entry point
-
-`app.py` starts the Flask server by calling `create_app()` from `web_app.py`.
-
-### 2. Session management
-
-`web_app.py` manages a single in-memory `ChatSession` with routes for:
-- `/` for the UI
-- `/api/chat` for submitting messages
-- `/api/state` for current app state
-- `/api/reset` for resetting the session
-- `/api/history` for conversation history
-- `/api/parsed-resume` for reading saved resume JSON
-
-### 3. Core chat logic
-
-`core/chat_service.py` handles the application workflow:
-- sending user input to the model
-- validating structured responses
-- saving parsed resume data
-- validating generated HTML
-- retrying invalid HTML generations
-- managing rating and revision state
-- analyzing inspiration URLs during revisions
-
-### 4. Validation
-
-`core/validators.py` checks generated output before it is accepted:
-- required HTML tags like `<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`, and `<title>`
-- inline CSS syntax with `tinycss2`
-- inline JS syntax with Node.js when available
-- browser-runtime rules such as no external script or stylesheet dependencies
-
-### 5. Inspiration analysis
-
-`core/dom_analyzer.py` analyzes public inspiration sites and summarizes their structure and visual characteristics. Those summaries are injected into the revision prompt.
-
----
-
-## GitHub safety checklist
-
-Before pushing this project publicly or privately:
-
-- keep your real `.env` file local only and never commit it
-- use `.env.example` as the template for other developers
-- do not commit generated files like `parsed_resume.json` or `portfolio.html`
-- do not commit `.git/`, `__pycache__/`, virtual environments, logs, or local databases
-- rotate any API key that was ever stored in the repository folder, a zip, a screenshot, or chat history
-
-Recommended first-time setup after cloning:
-
-```bash
-cp .env.example .env
-# then add your real OPENAI_API_KEY locally
-```
-
-If a secret was exposed previously, remove it from the repo, rotate it at the provider, and avoid reusing it.
-
----
-
-
 ## Requirements
 
-Before running the app, install:
+Install these first:
 
-- Python 3.11 or newer
+- Python 3.11+
 - pip
 - Playwright browser binaries
-- Node.js (optional, but recommended)
-
-### Why Node.js is optional
-
-The app can validate inline JavaScript syntax using `node --check`. If Node.js is not installed, the rest of the app still works, but JS syntax checking is skipped.
-
----
+- Node.js (optional but recommended for inline JavaScript validation)
 
 ## Setup
 
@@ -234,23 +140,25 @@ pip install -r requirements.txt
 python -m playwright install chromium
 ```
 
-This is needed for inspiration site analysis.
+### 5. Create your local `.env`
 
-### 5. Create your `.env` file
+```bash
+cp .env.example .env
+```
 
-Create a file named `.env` in the project root:
+Then open `.env` and set your real API key.
+
+Example:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-5-mini
+OPENAI_TIMEOUT_SECONDS=120
+FLASK_HOST=127.0.0.1
+FLASK_PORT=5000
 ```
 
-The app reads this variable in `config.py`.
-
----
-
 ## Running the app
-
-Start the Flask server:
 
 ```bash
 python app.py
@@ -262,41 +170,33 @@ Then open:
 http://127.0.0.1:5000
 ```
 
----
-
-## Using the app
+## How to use it
 
 ### Generate a portfolio
 
-In the chat box, paste resume text or describe the site you want.
+Paste resume text or describe the website you want.
 
 Example:
 
 ```text
-Create a modern software engineer portfolio. Use a dark theme, highlight my projects, and include a contact section. Here is my resume:
+Create a modern software engineer portfolio with a dark theme, strong project cards, and a contact section. Here is my resume:
 [paste resume here]
 ```
 
 ### Review the parsed resume
 
-If the model returns structured resume data, the app:
-- validates it against the resume schema
-- saves it to `parsed_resume.json`
-- shows it in the Parsed Resume panel
+If the model returns structured resume data, the app validates it, saves it to `parsed_resume.json`, and shows it in the Parsed Resume panel.
 
 ### Review generated HTML
 
-If the model returns valid HTML, the app:
-- saves it to `portfolio.html`
-- previews it in the Generated Portfolio panel
-- switches the UI into rating mode
+If the model returns valid HTML, the app saves it to `portfolio.html`, previews it in the UI, and switches to rating mode.
 
 ### Rate the result
 
 Send a number from `1` to `10`.
 
-- `8` to `10`: the portfolio is accepted and the session ends
-- `1` to `7`: the app asks for revision feedback
+- `8` to `10`: accept the current portfolio and end the session
+- `1` to `7`: request changes and continue the revision loop
 
 ### Revise the portfolio
 
@@ -305,7 +205,7 @@ Describe what should change.
 Example:
 
 ```text
-Make the layout cleaner, reduce the amount of text above the fold, and use a more premium dark color palette.
+Make the hero section cleaner, reduce the amount of text above the fold, and use a more premium dark palette.
 ```
 
 You can also include up to 3 public inspiration URLs.
@@ -318,60 +218,48 @@ https://example.com
 https://example.org
 ```
 
-The app analyzes those pages and uses the summaries when generating the next revision.
-
----
-
-## Outputs
-
-The app may generate these files in the project root:
-
-### `parsed_resume.json`
-Validated structured resume data returned by the model.
-
-### `portfolio.html`
-The latest valid standalone portfolio page.
-
----
-
 ## API routes
 
-The Flask app exposes these routes:
+- `GET /` - main UI
+- `GET /api/state` - current session snapshot
+- `POST /api/chat` - submit a message
+- `POST /api/reset` - reset the session
+- `GET /api/history` - conversation history
+- `GET /api/parsed-resume` - saved parsed resume content
 
-- `GET /` – main UI
-- `GET /api/state` – current session snapshot
-- `POST /api/chat` – submit a message
-- `POST /api/reset` – reset the session
-- `GET /api/history` – conversation history
-- `GET /api/parsed-resume` – saved parsed resume content
+## Environment variables
 
----
+- `OPENAI_API_KEY`: required
+- `OPENAI_MODEL`: optional, defaults to `gpt-5-mini`
+- `OPENAI_TIMEOUT_SECONDS`: optional, defaults to `120`
+- `FLASK_HOST`: optional, defaults to `127.0.0.1`
+- `FLASK_PORT`: optional, defaults to `5000`
 
 ## Notes and limitations
 
-- The app currently keeps one in-memory session per running server instance.
+- The app keeps one in-memory session per running server instance.
 - Generated HTML must be standalone. External JS and external CSS links are rejected by validation.
-- Inspiration URL analysis works best with public pages that render as normal HTML/CSS/JS sites.
-- The default model in `core/api_client.py` is currently:
+- Inspiration analysis works best with public pages that render as regular HTML/CSS/JS.
+- Node.js is optional, but without it the inline JavaScript syntax check is skipped.
 
-```python
-model = "gpt-5-mini"
-```
+## GitHub publishing checklist
 
-You can change that in code if you want to target a different model.
+Before pushing this repo:
 
----
+- Keep your real `.env` file local only.
+- Never commit API keys or generated secrets.
+- Do not commit generated files like `parsed_resume.json` or `portfolio.html`.
+- Do not commit local caches, virtual environments, or internal `.git` folders copied from another machine.
+- Rotate any API key that was ever stored inside this folder, inside a zip, or in screenshots/messages.
 
 ## Common issues
 
 ### `OPENAI_API_KEY is missing in your .env file`
-Create a `.env` file in the repo root and set:
 
-```env
-OPENAI_API_KEY=your_openai_api_key_here
-```
+Create `.env` from `.env.example` and add your real key.
 
 ### Playwright errors during inspiration analysis
+
 Install Chromium with:
 
 ```bash
@@ -379,22 +267,17 @@ python -m playwright install chromium
 ```
 
 ### JavaScript validation is not running
+
 Install Node.js so the app can use `node --check` for inline script validation.
 
----
+## Suggested future improvements
 
-## Suggested next improvements
-
-A few useful upgrades for the project would be:
-- add `.env.example`
-- add tests for validators and chat state transitions
-- support multiple saved portfolio versions
-- let users download the generated HTML from the UI
-- persist sessions instead of keeping them only in memory
-- make the model configurable through environment variables
-
----
+- Add automated tests for validators and chat state transitions
+- Support multiple saved portfolio versions
+- Add downloadable exports from the UI
+- Persist sessions instead of keeping them only in memory
+- Add Docker support
 
 ## License
 
-Add your preferred license here before publishing the repository.
+No license file is included in this package. Add your preferred license before publishing if you want others to reuse the code.

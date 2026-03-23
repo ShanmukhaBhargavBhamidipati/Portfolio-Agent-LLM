@@ -1,11 +1,13 @@
+import os
+
 from core.transport_models import StructuredLLMTransport
 
 
 class OpenAIChatClient:
-    def __init__(self, client, model: str = "gpt-5-mini", timeout: int = 120):
+    def __init__(self, client, model: str | None = None, timeout: int | None = None):
         self.client = client
-        self.model = model
-        self.timeout = timeout
+        self.model = model or os.getenv("OPENAI_MODEL", "gpt-5-mini")
+        self.timeout = timeout or int(os.getenv("OPENAI_TIMEOUT_SECONDS", "120"))
 
     def generate_structured_response(self, history: list[dict]):
         latest_user_message = next(
